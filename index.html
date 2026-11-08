@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finanzas Amigables</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+</head>
+<body>
+
+  <!-- ============ VISTA: LOGIN ============ -->
+  <section class="view" id="view-login">
+    <div class="auth-card">
+      <div class="logo-circle"><span>FA</span></div>
+      <h1>Finanzas Amigables</h1>
+      <p class="muted">Tu gestión financiera, 100% local.</p>
+
+      <div class="lockout-banner hidden" id="lockout-banner">
+        <i class="fa-solid fa-lock"></i>
+        <span id="lockout-text"></span>
+      </div>
+
+      <label>Correo electrónico</label>
+      <input type="email" id="login-email" autocomplete="email" placeholder="tu@correo.com" />
+
+      <label>Contraseña</label>
+      <div class="input-with-icon">
+        <input type="password" id="login-password" autocomplete="current-password" placeholder="••••••" />
+        <button type="button" class="icon-btn" id="toggle-login-password" aria-label="Mostrar/ocultar contraseña">
+          <i class="fa-regular fa-eye"></i>
+        </button>
+      </div>
+
+      <button class="btn-primary" id="btn-login">Iniciar Sesión</button>
+
+      <div class="links-row">
+        <a href="#" id="link-register">Crear cuenta</a>
+        <a href="#" id="link-recover">¿Olvidaste tu contraseña?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VISTA: REGISTRO ============ -->
+  <section class="view hidden" id="view-register">
+    <div class="auth-card">
+      <button class="back-btn" data-nav="login"><i class="fa-solid fa-arrow-left"></i></button>
+      <h1>Crear cuenta</h1>
+
+      <label>Nombre completo</label>
+      <input type="text" id="reg-name" />
+
+      <label>Correo electrónico</label>
+      <input type="email" id="reg-email" />
+
+      <label>Teléfono</label>
+      <input type="tel" id="reg-phone" />
+
+      <label>Contraseña (mín. 6)</label>
+      <input type="password" id="reg-password" />
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="reg-habeas" />
+        <span>Acepto el tratamiento local de mis datos (Habeas Data).</span>
+      </label>
+
+      <button class="btn-primary" id="btn-register">Registrarme</button>
+    </div>
+  </section>
+
+  <!-- ============ VISTA: RECUPERAR ============ -->
+  <section class="view hidden" id="view-recover">
+    <div class="auth-card">
+      <button class="back-btn" data-nav="login"><i class="fa-solid fa-arrow-left"></i></button>
+      <h1>Recuperar contraseña</h1>
+      <label>Correo</label>
+      <input type="email" id="rec-email" />
+      <label>Teléfono registrado</label>
+      <input type="tel" id="rec-phone" />
+      <label>Nueva contraseña</label>
+      <input type="password" id="rec-newpass" />
+      <button class="btn-primary" id="btn-recover">Actualizar</button>
+    </div>
+  </section>
+
+  <!-- ============ VISTA: HOME ============ -->
+  <section class="view hidden" id="view-home">
+    <header class="top-bar">
+      <div><h2 id="hello">¡Hola!</h2><p class="muted" id="today"></p></div>
+      <button class="icon-btn" id="btn-logout" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </header>
+
+    <div class="card summary-card" id="summary-card">
+      <!-- se rellena dinámicamente -->
+    </div>
+
+    <div class="grid-menu">
+      <button class="menu-card" data-nav="wizard"><i class="fa-solid fa-calculator"></i><span>Tu información financiera</span></button>
+      <button class="menu-card" data-nav="dashboard"><i class="fa-solid fa-chart-column"></i><span>Indicador Financiero</span></button>
+      <button class="menu-card" data-nav="settings"><i class="fa-solid fa-gear"></i><span>Configuración</span></button>
+      <button class="menu-card admin-only hidden" data-nav="admin"><i class="fa-solid fa-user-shield"></i><span>Panel Admin</span></button>
+    </div>
+  </section>
+
+  <!-- ============ VISTA: WIZARD ============ -->
+  <section class="view hidden" id="view-wizard">
+    <header class="top-bar">
+      <button class="back-btn" data-nav="home"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2>Tu información financiera</h2>
+    </header>
+
+    <div class="card">
+      <h3><i class="fa-solid fa-sack-dollar" style="color:#10B981"></i> Ingresos</h3>
+      <label>Ingreso mensual principal</label>
+      <input type="text" inputmode="decimal" class="money" id="w-main-income" placeholder="$ 0" />
+      <label>Otros ingresos</label>
+      <input type="text" inputmode="decimal" class="money" id="w-other-income" placeholder="$ 0" />
+    </div>
+
+    <div class="card">
+      <h3><i class="fa-solid fa-receipt" style="color:#F59E0B"></i> Gastos Fijos</h3>
+      <label>Promedio mensual</label>
+      <input type="text" inputmode="decimal" class="money" id="w-fixed-expenses" placeholder="$ 0" />
+      <p class="muted small">Arriendo, servicios, transporte, alimentación</p>
+    </div>
+
+    <div class="card">
+      <h3><i class="fa-solid fa-building-columns" style="color:#EF4444"></i> Deudas</h3>
+      <div id="debts-container"></div>
+      <button class="btn-dashed" id="btn-add-debt"><i class="fa-solid fa-plus"></i> Agregar Deuda</button>
+    </div>
+
+    <button class="btn-primary" id="btn-calculate">Calcular</button>
+    <button class="btn-link" id="btn-sample">Cargar ejemplo</button>
+  </section>
+
+  <!-- ============ VISTA: DASHBOARD ============ -->
+  <section class="view hidden" id="view-dashboard">
+    <header class="top-bar">
+      <button class="back-btn" data-nav="home"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2>Indicador Financiero</h2>
+    </header>
+
+    <div id="dashboard-empty" class="card hidden">
+      <div class="empty-state">
+        <i class="fa-solid fa-chart-line fa-3x muted"></i>
+        <p>Aún no has registrado tu información financiera.</p>
+        <button class="btn-primary" data-nav="wizard">Registrar información</button>
+      </div>
+    </div>
+
+    <div id="dashboard-content" class="hidden">
+      <div class="card" id="diagnosis-card"></div>
+
+      <div class="card">
+        <h3>Radiografía Financiera</h3>
+        <div class="chart-wrap"><canvas id="chart-pie"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h3>Cuota Mensual por Deuda</h3>
+        <div class="chart-wrap"><canvas id="chart-bars"></canvas></div>
+      </div>
+
+      <div class="card" id="strategies-card"></div>
+
+      <button class="btn-primary" id="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Descargar Informe PDF</button>
+
+      <div class="card">
+        <h3>Plan de Acción</h3>
+        <ul class="action-plan">
+          <li><i class="fa-solid fa-check"></i> Crear fondo de emergencia (3-6 meses de gastos).</li>
+          <li><i class="fa-solid fa-check"></i> Evitar nuevas deudas de consumo.</li>
+          <li><i class="fa-solid fa-check"></i> Revisar y renegociar tasas de interés.</li>
+          <li><i class="fa-solid fa-check"></i> Automatizar pagos para evitar mora.</li>
+          <li><i class="fa-solid fa-check"></i> Destinar excedentes al pago anticipado de deudas.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VISTA: SETTINGS ============ -->
+  <section class="view hidden" id="view-settings">
+    <header class="top-bar">
+      <button class="back-btn" data-nav="home"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2>Configuración</h2>
+    </header>
+
+    <div class="card" id="profile-info"></div>
+
+    <div class="card">
+      <h3>Seguridad</h3>
+      <label>Contraseña actual</label>
+      <input type="password" id="cfg-current" />
+      <label>Nueva contraseña</label>
+      <input type="password" id="cfg-new" />
+      <label>Confirmar</label>
+      <input type="password" id="cfg-confirm" />
+      <button class="btn-small" id="btn-change-pass">Guardar</button>
+    </div>
+
+    <div class="card">
+      <h3>Privacidad y manejo de datos</h3>
+      <p>Finanzas Amigables guarda toda tu información <b>en el almacenamiento local del navegador</b> (localStorage). No se envía nada a servidores externos.</p>
+      <div class="notice">
+        <i class="fa-solid fa-circle-info"></i>
+        <b>Todos los datos ingresados se almacenan de manera 100% local en el dispositivo. El tratamiento de esta información tiene fines estrictamente académicos y de investigación. Ningún dato financiero personal es enviado a servidores externos.</b>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Datos</h3>
+      <button class="btn-small btn-outline" id="btn-export"><i class="fa-solid fa-download"></i> Exportar JSON</button>
+      <label class="btn-small btn-outline" for="file-import" style="display:inline-block;cursor:pointer;margin-left:8px;"><i class="fa-solid fa-upload"></i> Importar JSON</label>
+      <input type="file" id="file-import" accept="application/json" style="display:none;" />
+      <hr />
+      <button class="btn-danger" id="btn-delete-profile"><i class="fa-solid fa-trash"></i> Eliminar mi perfil financiero</button>
+      <button class="btn-danger" id="btn-delete-account"><i class="fa-solid fa-user-xmark"></i> Eliminar mi cuenta</button>
+    </div>
+
+    <footer class="app-footer">
+      <small>Desarrollado por</small>
+      <p><b>Pulido Karen · Castillo Angela</b></p>
+      <small>Contacto académico</small>
+      <p><a href="mailto:karen.pulido41972@ucaldas.edu.co">karen.pulido41972@ucaldas.edu.co</a></p>
+      <p><a href="mailto:angela.ordonez43853@ucaldas.edu.co">angela.ordonez43853@ucaldas.edu.co</a></p>
+      <small>© 2026 Universidad de Caldas · Fines académicos</small>
+    </footer>
+  </section>
+
+  <!-- ============ VISTA: ADMIN ============ -->
+  <section class="view hidden" id="view-admin">
+    <header class="top-bar">
+      <button class="back-btn" data-nav="home"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2>Panel Admin</h2>
+    </header>
+    <div class="card">
+      <h3>Usuarios registrados</h3>
+      <div id="admin-users"></div>
+    </div>
+    <div class="card">
+      <h3>Base de datos</h3>
+      <button class="btn-small btn-outline" id="btn-admin-export"><i class="fa-solid fa-download"></i> Exportar</button>
+      <label class="btn-small btn-outline" for="file-admin-import" style="display:inline-block;cursor:pointer;margin-left:8px;"><i class="fa-solid fa-upload"></i> Importar</label>
+      <input type="file" id="file-admin-import" accept="application/json" style="display:none;" />
+    </div>
+  </section>
+
+  <!-- CDN scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+  <!-- App scripts (orden importa) -->
+  <script src="finance.js"></script>
+  <script src="auth.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
